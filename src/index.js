@@ -1,9 +1,14 @@
 const express = require('express');
 
-const app = express();
+const authController = require('./controllers/auth');
 
-app.get('/', (res, req) => {
+const app = express();
+app.use(express.json());
+
+app.use('/auth', authController);
+
+app.get('/', (req, res) => {
   return res.json('Api runing');
 });
 
-app.listen(3001, () => console.log(`Listen on port 3001 🔥`));
+app.listen(3001, () => console.log(`Listening on port 3001 🔥`));

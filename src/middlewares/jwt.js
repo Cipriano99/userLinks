@@ -3,9 +3,7 @@ const { verifyJwt } = require('../helpers/jsonwebtoken');
 const checkJwt = (req, res, next) => {
   const { url: path } = req;
 
-  const excludedPaths = ['/auth/signin', '/auth/signup'].find((p) =>
-    p.startsWith(path)
-  );
+  const excludedPaths = ['/auth/signin', '/auth/signup'];
   const isExcluded = !!excludedPaths.find((p) => p.startsWith(path));
   if (isExcluded) return next();
 

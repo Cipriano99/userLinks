@@ -25,7 +25,10 @@ router.post('/signin', accountSignIn, async (req, res) => {
   }
 
   const token = genereateJwt({ id: account.id });
-  const refreshToken = genereateRefreshJwt({ id: account.id });
+  const refreshToken = genereateRefreshJwt({
+    id: account.id,
+    version: account.jwtVersion,
+  });
 
   return res.jsonOK(account, getMessage('account.signin.sucess'), {
     token,
@@ -46,7 +49,10 @@ router.post('/signup', accountSignUp, async (req, res) => {
   const newAccount = await Account.create({ email, password: hash });
 
   const token = genereateJwt({ id: newAccount.id });
-  const refreshToken = genereateRefreshJwt({ id: newAccount.id });
+  const refreshToken = genereateRefreshJwt({
+    id: newAccount.id,
+    version: newAccount.jwtVersion,
+  });
 
   return res.jsonOK(newAccount, getMessage('account.signup.sucess'), {
     token,

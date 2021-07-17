@@ -7,11 +7,11 @@ const refreshTokenPrivateKey = process.env.JWT_REFRESH_TOKEN_PRIVATE_KEY;
 const options = { expiresIn: '30 minutes' };
 const refreshOptions = { expiresIn: '30 days' };
 
-const genereateJwt = (payload) => {
+const generateJwt = (payload) => {
   return jwt.sign(payload, tokenPrivateKey, options);
 };
 
-const genereateRefreshJwt = (payload) => {
+const generateRefreshJwt = (payload) => {
   return jwt.sign(payload, refreshTokenPrivateKey, refreshOptions);
 };
 
@@ -23,9 +23,15 @@ const verifyRefreshJwt = (token) => {
   return jwt.verify(token, refreshTokenPrivateKey);
 };
 
+const getTokenFromHeaders = (headers) => {
+  const token = headers['authorization'];
+  return token ? token.slice(7, token.length) : null;
+};
+
 module.exports = {
-  genereateJwt,
-  genereateRefreshJwt,
+  generateJwt,
+  generateRefreshJwt,
   verifyJwt,
   verifyRefreshJwt,
+  getTokenFromHeaders,
 };

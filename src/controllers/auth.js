@@ -6,9 +6,11 @@ const { accountSignUp, accountSignIn } = require('../validators/account');
 const { getMessage } = require('../helpers/validator');
 
 const {
-  genereateJwt,
-  genereateRefreshJwt,
-} = require('../helpers/jsonwebtoken');
+  generateJwt,
+  generateRefreshJwt,
+  verifyRefreshJwt,
+  getTokenFromHeaders,
+} = require('../helpers/jwt');
 
 const router = express.Router();
 
@@ -58,6 +60,30 @@ router.post('/signup', accountSignUp, async (req, res) => {
     token,
     refreshToken,
   });
+});
+
+router.post('/refresh', async (req, res) => {
+  const token = getTokenFromHeaders(req.headers);
+  if (!token) return res.jsonUnauthorized(null, 'Invalid token a');
+
+  try {
+    const decoded = verifyRefreshJwt(token);
+    const account = await Account.findByPk(decoded.id);
+
+    if (!account) return res.jsonUnauthorized(null, 'Invalid token b');
+
+    if (decoded.version !== account.jwtVersion) {
+      return res.jsonUnauthorized(null, 'Invalid token c');
+    }
+
+    const meta = {
+      token: generateJwt({ id: account.id }),
+    };
+
+    return res.jsonOK(null, null, meta);
+  } catch (error) {
+    return res.jsonUnauthorized(null, `${error}`);
+  }
 });
 
 module.exports = router;
